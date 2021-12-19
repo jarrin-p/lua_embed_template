@@ -1,18 +1,32 @@
-# Lua linking
-LUA_INCLUDE_DIR = ${LUAINCLUDE} # directory of lua library for linking
-LUA_LIB_NAME = lua # name of the library in the lua include dir (in this case, it's "liblua", which is just -llua when linking)
+# Locations
+LUA_INCLUDE_DIR:=${LUAINCLUDE}# directory of lua library for linking
 
-# Dynamic linking for using C in Lua scripts
-SHARED_LIBNAME = shared # name of .c and .h files, and name of .so to be generated
+# names
+LUA_LIB_NAME:=lua# name of the library in the lua include dir (in this case, it's "liblua", which is just -llua when linking)
+SHARED_LIBNAME:=shared# name of .c and .h files, and name of .so to be generated
+
+# Libraries
+LIBFLAGS:=-L$(LUA_INCLUDE_DIR)
+LIBFLAGS:=-L./lib $(LIBFLAGS)
+
+# Include directories
+INCLFLAGS:=-I$(LUA_INCLUDE_DIR)
+
+# -l lib includes
+LIBS:=-l$(LUA_LIB_NAME)
+LIBS:=-l$(SHARED_LIBNAME) $(LIBS)
+
+# output name
+OUT:=test
 
 .PHONY: all build clean
 all: clean build run
 clean:
-	-rm lib$(SHARED_LIBAME).so test
-build: lib$(SHARED_LIBNAME).so test
-lib$(SHARED_LIBNAME).so: $(SHARED_LIBNAME).c $(SHARED_LIBNAME).h
-	gcc -shared -Wall -Werror -fpic -o libshared.so shared.c
-test: lib$(SHARED_LIBNAME).so
-	gcc -L$(LUA_INCLUDE_DIR) -L$(shell pwd) -I$(LUA_INCLUDE_DIR) -o test main.c -l$(LUA_LIB_NAME) -l$(SHARED_LIBNAME)
-run: test
-	./test
+	-rm ./lib/* ./bin/*
+build: ./lib/lib$(SHARED_LIBNAME).so ./bin/$(OUT)
+./lib/lib$(SHARED_LIBNAME).so: ./src/$(SHARED_LIBNAME).c ./include/$(SHARED_LIBNAME).h
+	gcc -shared -Wall -Werror -fpic -o ./lib/lib$(SHARED_LIBNAME).so ./src/$(SHARED_LIBNAME).c
+./bin/$(OUT): ./lib/lib$(SHARED_LIBNAME).so
+	gcc $(LIBFLAGS) $(INCLFLAGS) -o ./bin/$(OUT) ./src/main.c $(LIBS)
+run: ./bin/$(OUT)
+	./bin/$(OUT)
