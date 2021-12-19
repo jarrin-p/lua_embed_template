@@ -1,2 +1,4 @@
 # description
-this is a template for a lua embedded C program. It links liblua from source install of lua and a shared object so from the local directory
+this is a template for using lua with C. it should run right away. it includes the setup for
+* embedding lua into a C program (via including the lua library interpreter)
+* using C functions in Lua scripts (via shared object .so files)
