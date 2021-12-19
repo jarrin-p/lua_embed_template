@@ -10,6 +10,6 @@
 // Function headers
 extern void sayHello(void);
 extern int l_testputs(lua_State *L);
-extern int luaopen_mylib(lua_State *L);
+extern int luaopen_libshared(lua_State *L);
 
 #endif

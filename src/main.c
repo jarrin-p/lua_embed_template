@@ -19,6 +19,9 @@ int main(void) {
     lua_pushcfunction(L, l_testputs);
     lua_setglobal(L, "attempt_puts");
 
+    luaopen_libshared(L);
+    lua_setglobal(L, "libshared");
+
     // functions return true if there's an error
     if(luaL_loadfile(L, script_path)) puts("Script unable to be loaded.");
     if(lua_pcall(L, 0, 0, 0)) puts("Script unable to run.");
