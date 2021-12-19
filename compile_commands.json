@@ -1,0 +1,27 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-Werror",
+      "-fpic",
+      "shared.c"
+    ],
+    "directory": "/Users/js/Dev/projects/c_compiling/lua_embed_template",
+    "file": "/Users/js/Dev/projects/c_compiling/lua_embed_template/shared.c"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-I/usr/local/lua/src",
+      "-o",
+      "test",
+      "main.c"
+    ],
+    "directory": "/Users/js/Dev/projects/c_compiling/lua_embed_template",
+    "file": "/Users/js/Dev/projects/c_compiling/lua_embed_template/main.c",
+    "output": "/Users/js/Dev/projects/c_compiling/lua_embed_template/test"
+  }
+]
