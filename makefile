@@ -5,28 +5,32 @@ LUA_INCLUDE_DIR:=${LUAINCLUDE}# directory of lua library for linking
 LUA_LIB_NAME:=lua# name of the library in the lua include dir (in this case, it's "liblua", which is just -llua when linking)
 SHARED_LIBNAME:=shared# name of .c and .h files, and name of .so to be generated
 
-# Libraries
+# Library path locations
 LIBFLAGS:=-L$(LUA_INCLUDE_DIR)
 LIBFLAGS:=-L./lib $(LIBFLAGS)
+
+# -l lib file includes
+LIBS:=-l$(LUA_LIB_NAME)
+SHARED_LIBS:=-l$(SHARED_LIBNAME)
+ALL_LIBS:=$(LIBS) $(SHARED_LIBS)
 
 # Include directories
 INCLFLAGS:=-I$(LUA_INCLUDE_DIR)
 
-# -l lib includes
-LIBS:=-l$(LUA_LIB_NAME)
-LIBS:=-l$(SHARED_LIBNAME) $(LIBS)
+OUT:=test# output name
+#ERRORFLAGS:=-Wall -Werror
+ERRORFLAGS:=
 
-# output name
-OUT:=test
+CC:=gcc $(LIBFLAGS) $(INCLFLAGS)
 
 .PHONY: all build clean
 all: clean build run
 clean:
-	-rm ./lib/* ./bin/*
+	rm -r ./lib ./bin && mkdir lib bin
 build: ./lib/lib$(SHARED_LIBNAME).so ./bin/$(OUT)
 ./lib/lib$(SHARED_LIBNAME).so: ./src/$(SHARED_LIBNAME).c ./include/$(SHARED_LIBNAME).h
-	gcc -shared -Wall -Werror -fpic -o ./lib/lib$(SHARED_LIBNAME).so ./src/$(SHARED_LIBNAME).c
+	$(CC) $(LIBS) -shared $(ERRORFLAGS) -fpic -o ./lib/lib$(SHARED_LIBNAME).so ./src/$(SHARED_LIBNAME).c
 ./bin/$(OUT): ./lib/lib$(SHARED_LIBNAME).so
-	gcc $(LIBFLAGS) $(INCLFLAGS) -o ./bin/$(OUT) ./src/main.c $(LIBS)
+	$(CC) $(ALL_LIBS) -o ./bin/$(OUT) ./src/main.c
 run: ./bin/$(OUT)
 	./bin/$(OUT)

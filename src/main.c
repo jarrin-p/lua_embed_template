@@ -15,11 +15,13 @@ int main(void) {
     lua_State *L = luaL_newstate();
     luaL_openlibs(L); // Opens lua standard libraries
 
-    int status = luaL_loadfile(L, script_path); // Loads test file
-    if(status) { puts("Script unable to be loaded."); }
+    // register function
+    lua_pushcfunction(L, l_testputs);
+    lua_setglobal(L, "attempt_puts");
 
-    status = lua_pcall(L, 0, 0, 0);
-    if(status) { puts("Script unable to run."); }
+    // functions return true if there's an error
+    if(luaL_loadfile(L, script_path)) puts("Script unable to be loaded.");
+    if(lua_pcall(L, 0, 0, 0)) puts("Script unable to run.");
 
     return 0;
 }
