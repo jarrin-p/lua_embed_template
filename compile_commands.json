@@ -6,10 +6,13 @@
       "-Wall",
       "-Werror",
       "-fpic",
+      "-o",
+      "libshared.so",
       "shared.c"
     ],
     "directory": "/Users/js/Dev/projects/c_compiling/lua_embed_template",
-    "file": "/Users/js/Dev/projects/c_compiling/lua_embed_template/shared.c"
+    "file": "/Users/js/Dev/projects/c_compiling/lua_embed_template/shared.c",
+    "output": "/Users/js/Dev/projects/c_compiling/lua_embed_template/libshared.so"
   },
   {
     "arguments": [

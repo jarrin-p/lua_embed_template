@@ -1,0 +1,4 @@
+*.o
+*.so
+.cache
+.DS_Store
