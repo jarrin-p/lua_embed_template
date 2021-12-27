@@ -28,13 +28,13 @@ clean:
 build: $(LIBS) $(SRCOBJS) ./bin/$(OUT)
 $(LIBS): CC:=gcc $(patsubst %,-I%,$(INCLUDEDIRS)) $(patsubst %,-L%,$(INCLUDEDIRS)) $(patsubst %,-l%,$(EXTLIBS)) $(ERRORFLAGS)
 $(LIBS): $(LIBSRCS)
-	$(CC) -shared -fpic -o $(LIBS) $(LIBSRCS)
+	#$(CC) -shared -fpic -o $(LIBS) $(LIBSRCS)
 $(SRCOBJS): CC:=gcc $(patsubst %,-I%,$(INCLUDEDIRS)) $(patsubst %,-L%,$(INCLUDEDIRS)) $(patsubst %,-l%,$(EXTLIBS)) $(ERRORFLAGS)
 $(SRCOBJS): $(SRCS)
-	$(CC) -o $<.o $<.c
+	#$(CC) -o $<.o $<.c
 ./bin/$(OUT): CC:=gcc $(patsubst %,-I%,$(INCLUDEDIRS)) $(patsubst %,-L%,$(INCLUDEDIRS)) $(patsubst %,-l%,$(EXTLIBS)) $(ERRORFLAGS)\
 	$(patsubst %,-L%,$(dir $(LIBS))) $(patsubst lib%.so,-l%,$(notdir $(LIBS)))
 ./bin/$(OUT): $(LIBS) $(SRCOBJS)
-	$(CC) -o ./bin/$(OUT) $(SRCOBJS)
+	#$(CC) -o ./bin/$(OUT) $(SRCOBJS)
 run: ./bin/$(OUT)
 	#./bin/$(OUT)
