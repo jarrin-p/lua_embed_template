@@ -14,27 +14,27 @@ SRCOBJS:=$(patsubst %.c,%.o,$(SRCS))
 LIBSRCS:=$(wildcard ./lib/*.c)
 LIBS:=$(patsubst %.c,$(dir $(LIBSRCS))lib%.so,$(notdir $(LIBSRCS)))
 
-ERRORFLAGS:=-Wall -Werror
+#ERRORFLAGS:=-Wall -Werror
+ERRORFLAGS:=
 
 CC:=gcc $(patsubst %,-I%,$(INCLUDEDIRS)) $(patsubst %,-L%,$(INCLUDEDIRS)) $(patsubst %,-l%,$(EXTLIBS)) $(ERRORFLAGS)
 
 .PHONY: all build clean
 all: clean build run
 clean:
-	-rm -r ./bin && mkdir bin && rm ./lib/*.so
+	-rm -r ./bin 
+	-mkdir bin 
+	-rm ./lib/*.so
 build: $(LIBS) $(SRCOBJS) ./bin/$(OUT)
 $(LIBS): CC:=gcc $(patsubst %,-I%,$(INCLUDEDIRS)) $(patsubst %,-L%,$(INCLUDEDIRS)) $(patsubst %,-l%,$(EXTLIBS)) $(ERRORFLAGS)
 $(LIBS): $(LIBSRCS)
-	echo Libs
-	#$(CC) $(LIBSRCS) -o $(LIBS) -shared -fpic
+	$(CC) -shared -fpic -o $(LIBS) $(LIBSRCS)
 $(SRCOBJS): CC:=gcc $(patsubst %,-I%,$(INCLUDEDIRS)) $(patsubst %,-L%,$(INCLUDEDIRS)) $(patsubst %,-l%,$(EXTLIBS)) $(ERRORFLAGS)
 $(SRCOBJS): $(SRCS)
-	echo SrcObjs
-	#$(CC) -o $<.o $<.c
+	$(CC) -o $<.o $<.c
 ./bin/$(OUT): CC:=gcc $(patsubst %,-I%,$(INCLUDEDIRS)) $(patsubst %,-L%,$(INCLUDEDIRS)) $(patsubst %,-l%,$(EXTLIBS)) $(ERRORFLAGS)\
 	$(patsubst %,-L%,$(dir $(LIBS))) $(patsubst lib%.so,-l%,$(notdir $(LIBS)))
 ./bin/$(OUT): $(LIBS) $(SRCOBJS)
-	echo Test
-	#$(CC) -o ./bin/$(OUT) $(SRCOBJS)
+	$(CC) -o ./bin/$(OUT) $(SRCOBJS)
 run: ./bin/$(OUT)
 	#./bin/$(OUT)
