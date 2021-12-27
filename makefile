@@ -1,37 +1,43 @@
-# Locations
-LUA_INCLUDE_DIR:=${LUAINCLUDE}# directory of lua library for linking
+OUT:=prog# output binary name
 
-# names
-LUA_LIB_NAME:=lua# name of the library in the lua include dir (in this case, it's "liblua", which is just -llua when linking)
-SHARED_LIBNAME:=shared# name of .c and .h files, and name of .so to be generated
+# Include Dirs
+INCLUDEDIRS:=${LUAINCLUDE}
 
-# Library path locations
-LIBFLAGS:=-L$(LUA_INCLUDE_DIR)
-LIBFLAGS:=-L./lib $(LIBFLAGS)
+# External library names
+EXTLIBS:=lua# name of the library in the lua include dir (in this case, it's "liblua", which is just -llua when linking)
 
-# -l lib file includes
-LIBS:=-l$(LUA_LIB_NAME)
-SHARED_LIBS:=-l$(SHARED_LIBNAME)
-ALL_LIBS:=$(LIBS) $(SHARED_LIBS)
+# Get deps, targs
+SRCS:=$(wildcard ./src/*.c)
+SRCOBJS:=$(patsubst %.c,%.o,$(SRCS))
 
-# Include directories
-INCLFLAGS:=-I$(LUA_INCLUDE_DIR)
+CC=gcc
 
-OUT:=test# output name
-#ERRORFLAGS:=-Wall -Werror
-ERRORFLAGS:=
+# Get shared library deps, targs
+LIBSRCS:=$(wildcard ./lib/*.c)
+LIBS:=$(patsubst %.c,$(dir $(LIBSRCS))lib%.so,$(notdir $(LIBSRCS)))
 
-CC:=gcc $(LIBFLAGS) $(INCLFLAGS)
+CFLAGS=$(patsubst %,-I%,$(INCLUDEDIRS)) -Wall -Werror
+LDFLAGS=$(patsubst %,-L%,$(INCLUDEDIRS)) $(patsubst %,-l%,$(EXTLIBS))
 
 .PHONY: all build clean
 all: clean build run
+
 clean:
-	-rm -r ./lib ./bin 
-	-mkdir lib bin
-build: ./lib/lib$(SHARED_LIBNAME).so ./bin/$(OUT)
-./lib/lib$(SHARED_LIBNAME).so: ./src/$(SHARED_LIBNAME).c ./include/$(SHARED_LIBNAME).h
-	$(CC) $(LIBS) -shared $(ERRORFLAGS) -fpic -o ./lib/lib$(SHARED_LIBNAME).so ./src/$(SHARED_LIBNAME).c
-./bin/$(OUT): ./lib/lib$(SHARED_LIBNAME).so
-	$(CC) $(ALL_LIBS) -o ./bin/$(OUT) ./src/main.c
+	-rm -r ./bin
+	-mkdir bin
+	-rm ./lib/*.so
+	-rm ./src/*.o
+build: $(LIBS) $(SRCOBJS) ./bin/$(OUT)
+
+$(LIBS): $(LIBSRCS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -shared -fpic -o $(LIBS) $(LIBSRCS)
+
+$(SRCOBJS): $(SRCS)
+	$(CC) $(CFLAGS) -c -o $(SRCOBJS) $(SRCS)
+
+./bin/$(OUT): LDFLAGS +=$(patsubst %,-L%,$(dir $(LIBS))) $(patsubst lib%.so,-l%,$(notdir $(LIBS)))
+./bin/$(OUT): $(LIBS) $(SRCOBJS)
+	$(CC) $(LDFLAGS) -o ./bin/$(OUT) $(SRCOBJS)
+
 run: ./bin/$(OUT)
 	./bin/$(OUT)
