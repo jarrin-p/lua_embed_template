@@ -26,7 +26,8 @@ CC:=gcc $(LIBFLAGS) $(INCLFLAGS)
 .PHONY: all build clean
 all: clean build run
 clean:
-	rm -r ./lib ./bin && mkdir lib bin
+	-rm -r ./lib ./bin 
+	-mkdir lib bin
 build: ./lib/lib$(SHARED_LIBNAME).so ./bin/$(OUT)
 ./lib/lib$(SHARED_LIBNAME).so: ./src/$(SHARED_LIBNAME).c ./include/$(SHARED_LIBNAME).h
 	$(CC) $(LIBS) -shared $(ERRORFLAGS) -fpic -o ./lib/lib$(SHARED_LIBNAME).so ./src/$(SHARED_LIBNAME).c
